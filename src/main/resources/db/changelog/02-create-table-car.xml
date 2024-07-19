@@ -6,6 +6,11 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <changeSet id="2" author="you" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="car"/>
+            </not>
+        </preConditions>
         <createTable tableName="car">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -45,7 +50,7 @@
             <column name="fueltype" value="Gasoline"/>
         </insert>
         <insert tableName="car">
-            <column name="brandid" valueNumeric="2"/>
+            <column name="brandid" valueNumeric="3"/>
             <column name="model" value="Mustang"/>
             <column name="year" valueNumeric="2023"/>
             <column name="numberofdoors" valueNumeric="2"/>

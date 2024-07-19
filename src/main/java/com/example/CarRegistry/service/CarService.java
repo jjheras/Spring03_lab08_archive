@@ -8,14 +8,18 @@ import java.util.concurrent.CompletableFuture;
 
 public interface CarService {
     CompletableFuture<List<CarDTO>> getAllCars();
+
     CompletableFuture<List<CarBrandDTO>> getAllCarBrand();
-    void addCar (CarDTO carDto);
+
+    void addCar(CarDTO carDto);
 
     void deleteCarById(Integer id);
 
     CarDTO getCarById(Integer id);
+
     CarBrandDTO getCarBrandById(Integer id);
 
     void updateCar(Integer id, CarDTO carDto);
+
     CompletableFuture<Void> addCars(List<CarDTO> carDtos);
 }

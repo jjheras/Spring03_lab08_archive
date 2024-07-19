@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -84,6 +85,9 @@ public class BrandServiceImpl implements BrandService {
     // Método para obtener una marca por ID
     @Override
     public BrandDTO getBrandById(Integer id) {
+        //prueba de test
+        Optional<BrandEntity> brandEntity = brandRepository.findById(id);
+
         return  brandRepository.findById(id).map(brandEntityMapper::brand).map(brandMapper::brandDto)
                 .orElseThrow(()-> new NoSuchElementException("El brand con el ID " + id + " no existe."));
     }

@@ -17,7 +17,6 @@ public class CarEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    //private BrandEntity brand;
     private Integer brandid;
     private String model;
     private Integer year;

@@ -52,32 +52,33 @@ public class CarServiceImpl implements CarService {
     @Async("taskExecutor")
     public CompletableFuture<List<CarDTO>> getAllCars() {
         long startTime = System.currentTimeMillis();
-        try{
-            List<CarDTO> carList =carRepository.findAll().stream()
-                .map(carEntityMapper::car).map(carMapper::carDto)
-                .collect(Collectors.toList());
+        try {
+            List<CarDTO> carList = carRepository.findAll().stream()
+                    .map(carEntityMapper::car).map(carMapper::carDto)
+                    .collect(Collectors.toList());
             long endTime = System.currentTimeMillis();
             log.info("Finalizando getAllCars en {}ms", (endTime - startTime));
-        return CompletableFuture.completedFuture(carList);
-        }catch (DataAccessException e){
+            return CompletableFuture.completedFuture(carList);
+        } catch (DataAccessException e) {
             long endTime = System.currentTimeMillis();
             //Mostramos el mensaje de finalización con el tiempo que ha tardado en realizar la operación.
-            log.error("Error al obtener todos los coches de la BBDD. Duración: {} ms. "+e.getMessage(),(endTime - startTime), e);
+            log.error("Error al obtener todos los coches de la BBDD. Duración: {} ms. " + e.getMessage(), (endTime - startTime), e);
             throw new RuntimeException("Error al obtener los coches de la BBDD", e);
         }
     }
+
     // Método para obtener todos los coches con sus marcas
     @Override
     //Utilizamos en este metodo asincronia por que accede a la BBDD para obtener gran volumen de informacion.
     @Async("taskExecutor")
-    public CompletableFuture<List<CarBrandDTO>> getAllCarBrand(){
+    public CompletableFuture<List<CarBrandDTO>> getAllCarBrand() {
         long startTime = System.currentTimeMillis();
-        try{
-            List<CarBrandDTO> carBrandList =  carRepository.findAll().stream().map(carEntity -> {
+        try {
+            List<CarBrandDTO> carBrandList = carRepository.findAll().stream().map(carEntity -> {
                 // Obtiene la marca asociada al coche
                 BrandDTO brandDTO = brandRepository.findById(carEntity.getBrandid())
                         .map(brandEntity -> brandMapper.brandDto(brandEntityMapper.brand(brandEntity)))
-                        .orElseThrow(()-> new RuntimeException("Brand no encontrado"));
+                        .orElseThrow(() -> new RuntimeException("Brand no encontrado"));
                 // Convierte el coche y la marca a CarBrandDTO
                 CarDTO carDTO = carMapper.carDto(carEntityMapper.car(carEntity));
                 return CarBrandDTO.builder()
@@ -98,18 +99,20 @@ public class CarServiceImpl implements CarService {
             //Mostramos el mensaje de finalización con el tiempo que ha tardado en realizar la operación.
             log.info("Finalizando getAllCarBrand en {} ms", (endTime - startTime));
             return CompletableFuture.completedFuture(carBrandList);
-        }catch (DataAccessException e){
+        } catch (DataAccessException e) {
             long endTime = System.currentTimeMillis();
             log.error("Error al obtener todos los coches con la marca de la BBDD en {} ms" + e.getMessage(), (endTime - startTime), e);
             throw new RuntimeException("Error al obtener los coches con la marca de la BBDD", e);
         }
     }
+
     // Método para agregar un nuevo coche
     @Override
     public void addCar(CarDTO carDto) {
-            CarEntity carEntity = carEntityMapper.carEntity(carMapper.car(carDto));
-            carRepository.save(carEntity);
+        CarEntity carEntity = carEntityMapper.carEntity(carMapper.car(carDto));
+        carRepository.save(carEntity);
     }
+
     // Método para agregar una lista de coches
     @Override
     //Utilizamos en este metodo asincronia por que accede a la BBDD para guardar una posible gran cantidad de información.
@@ -117,7 +120,7 @@ public class CarServiceImpl implements CarService {
     public CompletableFuture<Void> addCars(List<CarDTO> carDtos) {
         long startTime = System.currentTimeMillis();
         //es la manera de ejecutar una tarea asincronica sin que devuelva nada
-        return CompletableFuture.runAsync(()->{
+        return CompletableFuture.runAsync(() -> {
             try {
                 List<CarEntity> carEntities = carDtos.stream()
                         .map(carMapper::car)
@@ -128,7 +131,7 @@ public class CarServiceImpl implements CarService {
                 //Mostramos el mensaje de finalización con el tiempo que ha tardado en realizar la operación.
                 log.info("Finalizado addCars en {} ms", (endTime - startTime));
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 long endTime = System.currentTimeMillis();
                 log.error("Error en addCars en {} ms. Error: {}", (endTime - startTime), e.getMessage(), e);
                 throw e;
@@ -136,57 +139,61 @@ public class CarServiceImpl implements CarService {
         });
 
     }
+
     // Método para eliminar un coche por ID
     @Override
     public void deleteCarById(Integer id) {
         carRepository.deleteById(id);
     }
+
     // Método para obtener un coche por ID
     @Override
 
     public CarDTO getCarById(Integer id) {
-        return  carRepository.findById(id).map(carEntityMapper::car).
-                map(carMapper::carDto).orElseThrow(()-> new NoSuchElementException("El coche con el ID " + id + " no existe."));
+        return carRepository.findById(id).map(carEntityMapper::car).
+                map(carMapper::carDto).orElseThrow(() -> new NoSuchElementException("El coche con el ID " + id + " no existe."));
     }
+
     // Método para obtener un coche y su marca por ID
     @Override
-    public CarBrandDTO getCarBrandById(Integer id){
+    public CarBrandDTO getCarBrandById(Integer id) {
 
-                CarEntity carEntity = carRepository.findById(id)
-                        .orElseThrow(() -> new NoSuchElementException("El coche con el ID " + id + " no existe."));
+        CarEntity carEntity = carRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("El coche con el ID " + id + " no existe."));
 
-                // Obtiene la marca asociada al coche
-                BrandDTO brandDTO = brandRepository.findById(carEntity.getBrandid())
-                        .map(brandEntity -> brandMapper.brandDto(brandEntityMapper.brand(brandEntity)))
-                        .orElseThrow(()-> new RuntimeException("Brand no encontrado"));
-                // Convierte el coche y la marca a CarBrandDTO
-                CarDTO carDTO = carMapper.carDto(carEntityMapper.car(carEntity));
+        // Obtiene la marca asociada al coche
+        BrandDTO brandDTO = brandRepository.findById(carEntity.getBrandid())
+                .map(brandEntity -> brandMapper.brandDto(brandEntityMapper.brand(brandEntity)))
+                .orElseThrow(() -> new RuntimeException("Brand no encontrado"));
+        // Convierte el coche y la marca a CarBrandDTO
+        CarDTO carDTO = carMapper.carDto(carEntityMapper.car(carEntity));
 
-                CarBrandDTO carBrandDTO = CarBrandDTO.builder()
-                        .id(carDTO.getId())
-                        .brand(brandDTO)
-                        .model(carDTO.getModel())
-                        .year(carDTO.getYear())
-                        .numberofdoors(carDTO.getNumberofdoors())
-                        .isconvertible(carDTO.getIsconvertible())
-                        .mileage(carDTO.getMileage())
-                        .price(carDTO.getPrice())
-                        .description(carDTO.getDescription())
-                        .colour(carDTO.getColour())
-                        .fueltype(carDTO.getFueltype())
-                        .build();
+        CarBrandDTO carBrandDTO = CarBrandDTO.builder()
+                .id(carDTO.getId())
+                .brand(brandDTO)
+                .model(carDTO.getModel())
+                .year(carDTO.getYear())
+                .numberofdoors(carDTO.getNumberofdoors())
+                .isconvertible(carDTO.getIsconvertible())
+                .mileage(carDTO.getMileage())
+                .price(carDTO.getPrice())
+                .description(carDTO.getDescription())
+                .colour(carDTO.getColour())
+                .fueltype(carDTO.getFueltype())
+                .build();
 
-                return carBrandDTO;
+        return carBrandDTO;
 
     }
+
     // Método para actualizar un coche por ID
     @Override
     public void updateCar(Integer id, CarDTO carDto) {
 
-                Car car = carMapper.car(carDto);
-                CarEntity carEntity = carEntityMapper.carEntity(car);
-                carEntity.setId(id);
-                carRepository.save(carEntity);
+        Car car = carMapper.car(carDto);
+        CarEntity carEntity = carEntityMapper.carEntity(car);
+        carEntity.setId(id);
+        carRepository.save(carEntity);
 
     }
 }

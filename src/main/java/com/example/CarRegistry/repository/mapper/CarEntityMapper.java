@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public interface CarEntityMapper {
     CarEntityMapper INSTANCE = Mappers.getMapper(CarEntityMapper.class);
 
-    CarEntity carEntity (Car car);
-    Car car (CarEntity carEntity);
+    CarEntity carEntity(Car car);
+
+    Car car(CarEntity carEntity);
 }

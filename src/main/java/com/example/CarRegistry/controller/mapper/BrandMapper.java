@@ -1,7 +1,6 @@
 package com.example.CarRegistry.controller.mapper;
 
 import com.example.CarRegistry.controller.dto.BrandDTO;
-import com.example.CarRegistry.repository.entity.BrandEntity;
 import com.example.CarRegistry.service.model.Brand;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -14,5 +13,5 @@ public interface BrandMapper {
 
     BrandDTO brandDto(Brand brand);
 
-    Brand brand (BrandDTO brandDTO);
+    Brand brand(BrandDTO brandDTO);
 }

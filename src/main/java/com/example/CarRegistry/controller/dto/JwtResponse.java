@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BrandDTO {
-    private Integer id;
-    private String name;
-    private Integer warranty;
-    private String country;
+public class JwtResponse {
+    String token;
+
 }
